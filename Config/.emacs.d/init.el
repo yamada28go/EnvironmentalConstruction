@@ -19,6 +19,9 @@
     switch-window
     popwin
     helm
+    hlinum
+    anzu
+    volatile-highlights
     ))
 
 (let ((not-installed (loop for x in installing-package-list
@@ -28,11 +31,6 @@
     (package-refresh-contents)
     (dolist (pkg not-installed)
         (package-install pkg))))
-
-
-
-;ロードパスを設定
-(setq load-path (cons "~/.emacs.d/site-lisp/" load-path))
 
 ;;; 対応する括弧を光らせる。
 (show-paren-mode 1)
@@ -139,4 +137,31 @@
 ;--------------
 (global-set-key (kbd "C-x b") 'helm-mini)
 (helm-mode 1)
+
+;; 自動補完を無効
+(custom-set-variables '(helm-ff-auto-update-initial-value nil))
+
+;; For find-file etc.
+(define-key helm-read-file-map (kbd "TAB") 'helm-execute-persistent-action)
+;; For helm-find-files etc.
+(define-key helm-find-files-map (kbd "TAB") 'helm-execute-persistent-action)
+
+;---------------
+;行表示
+;--------------
+(require 'hlinum)
+(custom-set-variables
+ '(global-linum-mode t))
+
+;---------------
+;検索箇所の強化表示
+;--------------
+(require 'anzu)
+(global-anzu-mode +1)
+
+;---------------
+;操作箇所の強化表示
+;--------------
+(require 'volatile-highlights)
+(volatile-highlights-mode t)
 
