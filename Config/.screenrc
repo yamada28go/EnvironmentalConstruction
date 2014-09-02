@@ -1,0 +1,4 @@
+escape ^Zz
+startup_message off
+autodetach on
+vbell off
