@@ -22,6 +22,10 @@
     hlinum
     anzu
     volatile-highlights
+    js2-mode
+    ac-js2
+    js2-refactor
+    
     ))
 
 (let ((not-installed (loop for x in installing-package-list
@@ -164,4 +168,13 @@
 ;--------------
 (require 'volatile-highlights)
 (volatile-highlights-mode t)
+
+;---------------
+;Js2mode
+;--------------
+;本来は、autoloadで読めるはずであるが、
+;正しく読めないのでrequireしておく
+(require 'js2-mode)
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
