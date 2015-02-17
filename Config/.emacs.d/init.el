@@ -25,8 +25,16 @@
     js2-mode
     ac-js2
     js2-refactor
-    
+    powerline
+    tss
+    typescript
     ))
+
+;;テーマを設定
+;;デフォルトのターミナルでは、色が8色までしか使えないため、
+;;以下のような感じで、ターミナルを騙す
+;;TERM=xterm-256color emacs -nw
+(load-theme 'tsdh-dark t)
 
 (let ((not-installed (loop for x in installing-package-list
                             when (not (package-installed-p x))
@@ -44,6 +52,9 @@
 
 ;;; モードラインに時間を表示する
 (display-time)
+
+;;;現在の行をハイライトする
+(global-hl-line-mode t)
 
 ;;; 現在の関数名をモードラインに表示
 (which-function-mode 1)
@@ -75,7 +86,7 @@
 ;; (install-elisp "http://www.emacswiki.org/emacs-en/download/switch-window.el")
 ; C-x o が dim:switch-window になる
 ; 通常のwindow切り替え関数はother-windowなので、必要な時はこっち側を呼ぶ。
-(require 'switch-window) 
+(require 'switch-window)
 (global-set-key (kbd "C-x o") 'switch-window)
 ;(define-key global-map (kbd "C-t") 'other-window) ; C-t に other-window
 
@@ -178,3 +189,100 @@
 (autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
+;---------------
+;同一名称のバッファをわかりやすい名称に調整する
+;--------------
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+
+;---------------
+;空白行を可視化
+;--------------
+(require 'whitespace)
+(setq whitespace-style '(face           ; faceで可視化
+			 trailing       ; 行末
+			 tabs           ; タブ
+			 spaces         ; スペース
+			 empty          ; 先頭/末尾の空行
+			 space-mark     ; 表示のマッピング
+			 tab-mark
+			 ))
+
+(setq whitespace-display-mappings
+      '((space-mark ?\u3000 [?\u25a1])
+	;; WARNING: the mapping below has a problem.
+	;; When a TAB occupies exactly one column, it will display the
+	;; character ?\xBB at that column followed by a TAB which goes to
+	;; the next TAB column.
+	;; If this is a problem for you, please, comment the line below.
+	(tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t])))
+
+;; スペースは全角のみを可視化
+(setq whitespace-space-regexp "\\(\u3000+\\)")
+
+;; 保存前に自動でクリーンアップ
+(setq whitespace-action '(auto-cleanup))
+
+(global-whitespace-mode 1)
+
+(defvar my/bg-color "#232323")
+(set-face-attribute 'whitespace-trailing nil
+		    :background my/bg-color
+		    :foreground "DeepPink"
+		    :underline t)
+(set-face-attribute 'whitespace-tab nil
+		    :background my/bg-color
+		    :foreground "LightSkyBlue"
+		    :underline t)
+(set-face-attribute 'whitespace-space nil
+		    :background my/bg-color
+		    :foreground "GreenYellow"
+		    :weight 'bold)
+(set-face-attribute 'whitespace-empty nil
+		    :background my/bg-color)
+
+;;-----------
+;;powerlineの設定
+;;-----------
+(require 'powerline)
+
+(set-face-attribute 'mode-line nil
+		    :foreground "#fff"
+		    :background "#FF0066"
+		    :box nil)
+
+(set-face-attribute 'powerline-active1 nil
+		    :foreground "#fff"
+		    :background "#FF6699"
+		    :inherit 'mode-line)
+
+(set-face-attribute 'powerline-active2 nil
+		    :foreground "#000"
+		    :background "#ffaeb9"
+		    :inherit 'mode-line)
+
+(powerline-default-theme)
+
+;---------------
+;TypeScript
+;--------------
+
+;(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
+;(autoload 'typescript-mode "TypeScript" "Major mode for editing typescript." t)
+
+;; 同梱されたtypescript.elを使う場合
+;(require 'typescript)
+;(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
+
+;; (require 'tss)
+
+;; ;; キーバインド
+;; (setq tss-popup-help-key "C-:")
+;; (setq tss-jump-to-definition-key "C->")
+;; (setq tss-implement-definition-key "C-c i")
+
+;; ;; 必要に応じて適宜カスタマイズして下さい。以下のS式を評価することで項目についての情報が得られます。
+;; ;; (customize-group "tss")
+
+;; ;; 推奨設定を行う
+;; (tss-config-default)
